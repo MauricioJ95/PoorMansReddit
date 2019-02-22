@@ -19,10 +19,10 @@ namespace PoorMansReddit.Controllers
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
-            List<JToken> people = GetPage();
+            List<JToken> redditList = GetRedditData();
             AboutModel model = new AboutModel();
             model.Items = new List<RedditModel>();
-            foreach (var item in people)
+            foreach (var item in redditList)
             {
                 model.Items.Add(MapRedditModel(item));
             }
@@ -49,9 +49,9 @@ namespace PoorMansReddit.Controllers
             return View();
         }
 
-        public List<JToken> GetPage()
+        public List<JToken> GetRedditData()
         {
-            string URL = "https://www.reddit.com/r/aww/.json";
+            string URL = "https://www.reddit.com/r/aww/.json?limit=10";
 
             HttpWebRequest request = WebRequest.CreateHttp(URL);
 
@@ -61,9 +61,9 @@ namespace PoorMansReddit.Controllers
 
             string APIText = sr.ReadToEnd();
 
-            JToken personData = JToken.Parse(APIText);
+            JToken edditData = JToken.Parse(APIText);
 
-            var data = personData.SelectToken("data.children");
+            var data = edditData.SelectToken("data.children");
 
             return data.ToList();
         }
