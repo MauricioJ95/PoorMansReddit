@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using PoorMansReddit.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,16 +20,26 @@ namespace PoorMansReddit.Controllers
         {
             ViewBag.Message = "Your application description page.";
             List<JToken> people = GetPage();
-            List<string> names = new List<string>();
-            for (int i = 0; i < people.Count; i++)
+            AboutModel model = new AboutModel();
+            model.Items = new List<RedditModel>();
+            foreach (var item in people)
             {
-                JToken person = people[i];
-                string name = person["name"].ToString();
-                names.Add(name);
+                model.Items.Add(MapRedditModel(item));
             }
-            ViewBag.Names = names;
 
-            return View();
+            return View(model);
+        }
+
+        private RedditModel MapRedditModel(JToken item)
+        {
+            var token = item["data"];
+
+            return new RedditModel()
+            {
+                Title = token.SelectToken("title").ToString(),
+                Image = token.SelectToken("thumbnail").ToString(),
+                Link = token.SelectToken("url").ToString()
+            };
         }
 
         public ActionResult Contact()
@@ -52,9 +63,9 @@ namespace PoorMansReddit.Controllers
 
             JToken personData = JToken.Parse(APIText);
 
-            List<JToken> people = personData["data"].ToList();
+            var data = personData.SelectToken("data.children");
 
-            return people;
+            return data.ToList();
         }
     }
 }

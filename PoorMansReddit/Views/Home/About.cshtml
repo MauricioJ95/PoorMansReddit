@@ -1,4 +1,5 @@
-﻿@{
+﻿@model PoorMansReddit.Models.AboutModel
+@{
     ViewBag.Title = "About";
 }
 <h2>@ViewBag.Title.</h2>
@@ -6,7 +7,11 @@
 
 <p>Use this area to provide additional information.</p>
 
-@foreach(var name in ViewBag.names)
+@foreach (var item in Model.Items)
 {
-    <p>@name</p>
+<ul>
+    <li>>@item.Title</li>
+    <li><img src="@item.Image" /></li>
+    <li><a href="@item.Link" target="_blank">Link</a></li>
+</ul>
 }
